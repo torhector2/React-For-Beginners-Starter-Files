@@ -4,11 +4,28 @@ import Order from './Order'
 import Inventory from './Inventory'
 import sampleFishes from '../sample-fishes'
 import Fish from './Fish'
+import base from '../base'
 
 class App extends Component {
     state = {
         fishes: {},
         order: {}
+    }
+
+    componentDidMount() {
+        const { params } = this.props.match
+        this.ref = base.syncState(`${params.storeId}/fishes`, {
+            context: this,
+            state: 'fishes'
+        })
+    }
+
+    componentWillUnmount() {
+        //disconnect from this particular fish-store in the database. Stop syncing the store since it can lead to memory leaks
+        //because everytime we mount the app we sync to a new store-name (remember this are random fish stores names) but we don't 
+        //disconnect from it when we finish. this makes the app to keep a connection with N different databases in Firebase (or stores)
+        //SO HERE WE DISCONNECT
+        base.removeBinding(this.ref)
     }
 
     addFish = (fish) => {
