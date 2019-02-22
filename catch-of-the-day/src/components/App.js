@@ -14,6 +14,11 @@ class App extends Component {
 
     componentDidMount() {
         const { params } = this.props.match
+        //first reinstate our localstorage
+        const localStorageRef = localStorage.getItem(params.storeId)
+        if (localStorageRef) {
+            this.setState( {order: JSON.parse(localStorageRef)} )
+        }
         this.ref = base.syncState(`${params.storeId}/fishes`, {
             context: this,
             state: 'fishes'
@@ -26,6 +31,10 @@ class App extends Component {
         //disconnect from it when we finish. this makes the app to keep a connection with N different databases in Firebase (or stores)
         //SO HERE WE DISCONNECT
         base.removeBinding(this.ref)
+    }
+
+    componentDidUpdate() {
+        localStorage.setItem(this.props.match.params.storeId, JSON.stringify(this.state.order))
     }
 
     addFish = (fish) => {
