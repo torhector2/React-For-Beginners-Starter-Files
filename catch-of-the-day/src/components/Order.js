@@ -14,6 +14,9 @@ class Order extends Component {
     return <li key={key}>
       {count} lbs {fish.name}
       {formatPrice(count * fish.price)}
+      <button onClick={() => {
+        this.props.removeFromOrder(key)
+      }}>&times;</button>
     </li>
   }
   render() {
